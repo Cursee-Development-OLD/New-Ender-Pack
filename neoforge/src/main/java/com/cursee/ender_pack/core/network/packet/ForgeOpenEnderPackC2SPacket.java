@@ -41,25 +41,48 @@ public class ForgeOpenEnderPackC2SPacket implements CustomPacketPayload {
 
             final AtomicBoolean SHOULD_OPEN_ENDER_PACK = new AtomicBoolean(false);
 
-            // CHESTPLATE SLOT
-            // player.getArmorSlots().forEach(itemStack -> {
-            //     if (itemStack.is(Services.PLATFORM.getRegisteredEnderPackItem())) SHOULD_OPEN_ENDER_PACK.set(true);
-            // });
-
-            // ANY SLOT
-            player.getAllSlots().forEach(itemStack -> {
-                if (itemStack.is(Services.PLATFORM.getRegisteredEnderPackItem())) SHOULD_OPEN_ENDER_PACK.set(true);
+            player.getInventory().armor.forEach(itemStack -> {
+                if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_OPEN_ENDER_PACK.set(true);
             });
+            player.getInventory().items.forEach(itemStack -> {
+                if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_OPEN_ENDER_PACK.set(true);
+            });
+            player.getInventory().offhand.forEach(itemStack -> {
+                if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_OPEN_ENDER_PACK.set(true);
+            });
+            if (player.getInventory().getSelected().getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_OPEN_ENDER_PACK.set(true);
 
-            // CURIOS SLOT
-            if (Services.PLATFORM.isModLoaded("curios")) SHOULD_OPEN_ENDER_PACK.set(Services.PLATFORM.checkSlotsFromMods(player));
+            if (Services.PLATFORM.isModLoaded("curios")) {
+                if (Services.PLATFORM.checkSlotsFromMods(player)) {
+                    SHOULD_OPEN_ENDER_PACK.set(true);
+                }
+            }
 
             if (!SHOULD_OPEN_ENDER_PACK.get()) return;
 
             player.openMenu(new SimpleMenuProvider(
-                    (containerID, playerInventory, player1) -> ChestMenu.threeRows(containerID, playerInventory, player.getEnderChestInventory()),
-                    Component.translatable("container.enderPack"))
-            );
+                (containerID, playerInventory, player1) ->
+                    ChestMenu.threeRows(containerID, playerInventory, player.getEnderChestInventory()), Component.translatable("container.enderPack")));
+//
+//            // CHESTPLATE SLOT
+//            // player.getArmorSlots().forEach(itemStack -> {
+//            //     if (itemStack.is(Services.PLATFORM.getRegisteredEnderPackItem())) SHOULD_OPEN_ENDER_PACK.set(true);
+//            // });
+//
+//            // ANY SLOT
+//            player.getAllSlots().forEach(itemStack -> {
+//                if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_OPEN_ENDER_PACK.set(true);
+//            });
+//
+//            // CURIOS SLOT
+//            if (Services.PLATFORM.isModLoaded("curios")) SHOULD_OPEN_ENDER_PACK.set(Services.PLATFORM.checkSlotsFromMods(player));
+//
+//            if (!SHOULD_OPEN_ENDER_PACK.get()) return;
+//
+//            player.openMenu(new SimpleMenuProvider(
+//                    (containerID, playerInventory, player1) -> ChestMenu.threeRows(containerID, playerInventory, player.getEnderChestInventory()),
+//                    Component.translatable("container.enderPack"))
+//            );
         });
 
         return true;

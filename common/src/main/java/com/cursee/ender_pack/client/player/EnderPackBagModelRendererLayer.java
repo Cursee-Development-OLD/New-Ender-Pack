@@ -10,51 +10,71 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EnderPackBagModelRendererLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
 
-    public EnderPackBagModelRendererLayer(RenderLayerParent<T, M> $$0) {
-        super($$0);
+//    public EnderPackBagModelRendererLayer(RenderLayerParent<T, M> $$0) {
+//        super($$0);
+//    }
+//
+//    @Override
+//    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, T t, float v, float v1, float v2, float v3, float v4, float v5) {
+//
+//    }
+
+
+    private final EnderPackBagModel<T> BAG_MODEL;
+
+    public EnderPackBagModelRendererLayer(RenderLayerParent<T, M> renderLayerParent) {
+        super(renderLayerParent);
+        BAG_MODEL = new EnderPackBagModel<T>(Minecraft.getInstance().getEntityModels().bakeLayer(EnderPackClient.ENDER_PACK_LAYER));
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, T t, float v, float v1, float v2, float v3, float v4, float v5) {
-
+    protected ResourceLocation getTextureLocation(T $$0) {
+        return EnderPackClient.ENDER_PACK_TEXTURE;
     }
 
+    @Override
+    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int lightness, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 
-//    private final EnderPackBagModel<T> BAG_MODEL;
-//
-//    public EnderPackBagModelRendererLayer(RenderLayerParent<T, M> renderLayerParent) {
-//        super(renderLayerParent);
-//        BAG_MODEL = new EnderPackBagModel<T>(Minecraft.getInstance().getEntityModels().bakeLayer(EnderPackClient.ENDER_PACK_LAYER));
-//    }
-//
-//    @Override
-//    protected ResourceLocation getTextureLocation(T $$0) {
-//        return EnderPackClient.ENDER_PACK_TEXTURE;
-//    }
-//
-//    @Override
-//    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int lightness, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-//
-//        final AtomicBoolean SHOULD_RENDER_BAG_MODEL = new AtomicBoolean(false);
-//
+        if (!(entity instanceof Player player)) return;
+        final AtomicBoolean SHOULD_RENDER_BAG_MODEL = new AtomicBoolean(false);
+
 //        entity.getArmorSlots().forEach(itemStack -> {
 //            if (itemStack.is(Services.PLATFORM.getRegisteredEnderPackItem())) SHOULD_RENDER_BAG_MODEL.set(true);
 //        });
-//
+
 //        if (Services.PLATFORM.isModLoaded("trinkets") || Services.PLATFORM.isModLoaded("curios")) {
 //            SHOULD_RENDER_BAG_MODEL.set(SHOULD_RENDER_BAG_MODEL.get() || Services.PLATFORM.checkSlotsFromMods(entity));
 //        }
-//
-//        if (!SHOULD_RENDER_BAG_MODEL.get()) return;
-//
-//        poseStack.pushPose();
-//        poseStack.translate(0.0d, 0.25d, 0.3125d);
-//        RenderLayer.renderColoredCutoutModel(BAG_MODEL, getTextureLocation(entity), poseStack, multiBufferSource, lightness, entity, 1.0f, 1.0f, 1.0f);
-//        poseStack.popPose();
-//    }
+
+        player.getInventory().armor.forEach(itemStack -> {
+            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+        });
+        player.getInventory().items.forEach(itemStack -> {
+            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+        });
+        player.getInventory().offhand.forEach(itemStack -> {
+            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+        });
+        if (player.getInventory().getSelected().getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+
+        if (Services.PLATFORM.isModLoaded("curios")) {
+            if (Services.PLATFORM.checkSlotsFromMods(player)) {
+                SHOULD_RENDER_BAG_MODEL.set(true);
+            }
+        }
+
+        if (!SHOULD_RENDER_BAG_MODEL.get()) return;
+
+        poseStack.pushPose();
+        poseStack.translate(0.0d, 0.25d, 0.3125d);
+        // RenderLayer.renderColoredCutoutModel(BAG_MODEL, getTextureLocation(entity), poseStack, multiBufferSource, lightness, entity, 1.0f);
+        RenderLayer.renderColoredCutoutModel(BAG_MODEL, getTextureLocation(entity), poseStack, multiBufferSource, lightness, entity, 0xFFFFFFFF);
+        poseStack.popPose();
+    }
 }
