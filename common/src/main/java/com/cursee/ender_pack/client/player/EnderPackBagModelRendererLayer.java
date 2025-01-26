@@ -55,15 +55,15 @@ public class EnderPackBagModelRendererLayer<T extends LivingEntity, M extends Hu
         player.getInventory().armor.forEach(itemStack -> {
             if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
         });
-        player.getInventory().items.forEach(itemStack -> {
-            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
-        });
-        player.getInventory().offhand.forEach(itemStack -> {
-            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
-        });
-        if (player.getInventory().getSelected().getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+//        player.getInventory().items.forEach(itemStack -> {
+//            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+//        });
+//        player.getInventory().offhand.forEach(itemStack -> {
+//            if (itemStack.getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
+//        });
+//        if (player.getInventory().getSelected().getItem() == Services.PLATFORM.getRegisteredEnderPackItem()) SHOULD_RENDER_BAG_MODEL.set(true);
 
-        if (Services.PLATFORM.isModLoaded("curios")) {
+        if (Services.PLATFORM.isModLoaded("curios") || Services.PLATFORM.isModLoaded("trinkets")) {
             if (Services.PLATFORM.checkSlotsFromMods(player)) {
                 SHOULD_RENDER_BAG_MODEL.set(true);
             }
